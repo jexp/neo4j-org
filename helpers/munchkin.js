@@ -131,7 +131,7 @@ exports.add_route = function(path,app) {
         var info = req.body;
         var activity = info.Activity||"register";
         delete info.Activity;
-        console.log(info);
+        // console.log(info);
         associateMarketoLead(info, function(error,associate_result) {
             if (error) {
                 console.log(error);

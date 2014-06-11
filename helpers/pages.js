@@ -2448,8 +2448,8 @@ Questions?  Feedback?   Contact us at <a href='mailto:training@neotechnology.com
                 introText: "Neo4j Spatial is an open-source library of utilities for Neo4j that faciliates the enabling of spatial operations on data. Besides basic spatial search it also integrates with geoserver and uDig.",
                 author: ["peterneubauer", "craigtaverner", "amorgner"],
                 thumbnail: asset("img/logo/github.png"),
-                github: "http://github.com/neo4j/spatial",
-                path: "http://neo4j.github.io/spatial/"
+                github: "http://github.com/neo4j-contrib/spatial",
+                path: "http://neo4j-contrib.github.io/spatial/"
             },
             {
                 type: "link",

@@ -60,6 +60,7 @@ app.locals.content = content.content;
 // app.locals.contributors = data.contributors;
 app.locals.contributors = {};
 app.locals.graphgists = {};
+app.locals.articles = content.content.articles;
 app.locals.graphgist_files = { content : {}};
 app.locals.drivers = data.drivers;
 app.locals.ext_content = data.ext_content;
@@ -84,33 +85,32 @@ function get_graphgist(item,cb) {
         // http://gist.neo4j.org/?github-HazardJ%2Fgists%2F%2FDoc_Source_Graph.adoc
         // http://gist.neo4j.org/?dropbox-14493611%2Fmovie_recommendation.adoc
         var decoded = decodeURIComponent(url);
-console.log("resolveGraphGistUrl",url,"#"+decoded+"#");
         var match = decoded.match(/^http:\/\/gist.neo4j.org\/\?(.+)/);
         if (match) {
             var original = match[1];
             if (original.match(/^[0-9a-f]{5,}/i)) {
-                // gist
                 return "https://gist.github.com/" + original;
             }
             if (original.match(/github-/i)) {
-                // gist
                 return "https://github.com/" + original.substring("github-".length);
             }
             if (original.match(/dropbox-/i)) {
-                // gist
                 return "https://dl.dropboxusercontent.com/u/" + original.substring("dropbox-".length);
             }
-            // todo dropbox
-            // o
         }
+        return decoded;
     }
-
     var original = resolveGraphGistUrl(item.url);
-    var content = app.locals.graphgist_files.content[item.id];
+    var content = app.locals.graphgist_files.content[item.url];
+
     if (!content || content == "Content not found") {
-        content_loading.load_content(app.locals.graphgist_files, item.id, original,cb);
+        // todo dropbox
+        content_loading.load_content(app.locals.graphgist_files, item.url, original,cb);
     } else {
-        cb(null, content, item.id, original);
+        if(cb) {
+            cb(null, content, item.url, original);
+        }
+        return content;
     }
 }
 
@@ -144,17 +144,24 @@ app.locals.chunk = function (arr, size) {
 };
 
 function findItem(key,type) {
-//    console.log("findItem", key)
+    // console.log("findItem", key, type)
     if (typeof key == 'undefined') return null;
     if (typeof key == 'function') key = key();
     if (typeof key == 'object') return key;
-
+    var parts = key.match(/^\/c\/(.+?)\/+(.+?)$/);
+    if (parts) {
+        //TODO: this is not working
+        // console.log('findItem path', key, 'type: ',typeof key, parts);
+        key = parts[2];
+        type = parts[1];
+    }
     if (type) {
-//        console.log("key",key,"type",type);
-        var item=addType(app.locals[type][key],type);
+        // console.log("key",key,"type",type, item);
+        var item=addType(app.locals[type]?app.locals[type][key]:content.content[type][key],type.replace(/s$/,""));
         if (!item) return key;
     }
     function addType(item, type) {
+        // console.log('addType', item, type);
         if (!item.type) item.type = type;
         return item;
     }
@@ -162,12 +169,13 @@ function findItem(key,type) {
     if (content.content[key]) return addType(content.content[key], "content");
     if (content.content.drivers[key]) return addType(content.content.drivers[key], "driver");
     if (content.content.books[key]) return addType(content.content.books[key], "book");
+    if (content.content.articles[key]) return addType(content.content.articles[key], "article");
     if (app.locals.contributors[key]) return addType(app.locals.contributors[key], "contributor");
     if (app.locals.graphgists[key]) return addType(app.locals.graphgists[key], "graphgist");
     if (data.contributors[key]) return addType(data.contributors[key], "contributor");
     if (data.ext_content[key]) return addType(data.ext_content[key], "external");
     if (content.content.apps[key]) return addType(content.content.apps[key], "app");
-    if (content.content.links[key]) return addType(content.content.drivers[key], "link");
+    if (content.content.links[key]) return addType(content.content.links[key], "link");
     if (content.content.videos[key]) return addType(content.content.videos[key], "video");
     if (content.content.asciidoc[key]) return addType(content.content.asciidoc[key], "asciidoc");
     if (app.locals.graphgists[key]) return addType(app.locals.graphgists[key], "graphgist");
@@ -377,7 +385,6 @@ route_get('/*/', function (req, res) {
 app.get("/", function (req, res) {
     var page = app.locals.pages["index"];
     var params = merge({ path:page.path, title:page.title || "", locals:merge(app.locals,res.locals) });
-    console.log("merge",Object.keys(params));
     res.render("partials/page", params);
 });
 
@@ -557,9 +564,26 @@ route_get('/graphgist', function (req, res) {
     });
 });
 
+//urls that ill be attempted to the resolved and served dynamically, e.g. http://localhost:3000/e/asciidoc/jdbc_csv
+route_get('/e/:type/:item', function (req, res) {
+    var item = req.param("item");
+    var type = req.param("type");
+    var content = findItem(item, type);
+    load_gist(content.url, function(err, data) {
+        var item = {};
+        content.content = data;
+        var params = merge({ page:content, path:req.path, title:content.title || "", locals:merge(app.locals,res.locals) });
+        res.render("partials/default/_page", params);
+    });
+});
+
+
+//urls referring to prepopulated items upon startup (e.g. from graphgists spreadsheet, http://localhost:3000/c/graphgists/github-neo4j-contrib%2Fgists%2F%2Fother%2FBankFraudDetection.adoc)
 route_get("/c/:type/:item",function (req, res) {
-    var page = findItem(req.param("item"),req.param("type"));
-    var params = merge({ path:req.path, title:page.title || "", locals:merge(app.locals,res.locals) });
+    var item = req.param("item");
+    var type = req.param("type");
+    var page = findItem(item, type);
+    var params = merge({ page:page, path:req.path, title:page.title || "", locals:merge(app.locals,res.locals) });
     res.render("partials/default/_page", params);
 });
 
@@ -589,7 +613,7 @@ route_get('/api/sitemap.csv', function (req, res) {
     for (var id in app.locals.pages) {
         var page = app.locals.pages[id];
         var pageStr = values(page).join(delim)+delim;
-        console.log(id,"related",typeof(page.related),"featured",typeof(page.featured));
+        //console.log(id,"related",typeof(page.related),"featured",typeof(page.featured));
         if (page.featured) page.featured.forEach(function (f) { var item = findItem(f); result.push(pageStr + "FEATURED§" + values(item).join("§"))});
         if (page.related) page.related.forEach(function (f) { var item = findItem(f); result.push(pageStr + "RELATED§" + values(item).join("§"))});
         if (!(page.related || page.featured)) result.push(pageStr);

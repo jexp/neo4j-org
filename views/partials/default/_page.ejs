@@ -1,57 +1,53 @@
 <%
-var pageName = path.substring(path.lastIndexOf('/')+1, path.length);
+//var pageName = path.substring(path.lastIndexOf('/')+1, path.length);
 var mainCategory = path.split('/')[1];
-var page = findItem(pageName,mainCategory);
-//console.log("page",pageName,"cat",mainCategory)
-//console.log(Object.keys(pages));
 var title=page.title;
+var item = page;
 %>
 
-<% include ../head %>
+<% include ../../head %>
 <%
 if (page) {
 %>
 <div class="mainpage"><!-- page -->
     <% if (page.title) { %>
 <h1><%= page.title %></h1>
-    <% } %>
-
-
+<% } %>
 <% (page.prev||[]).forEach(function(p) {
 var prevPage = pages[p];
-  %>
-    <div class="btn trackNav prevStep"><a href="<%= prevPage.path %>"><i class="icon icon-circle-arrow-left"></i></a><a href="<%= prevPage.path %>"><%= prevPage.title %></a></div>
+%>
+<div class="btn trackNav prevStep"><a href="<%= prevPage.path %>"><i class="icon icon-circle-arrow-left"></i></a><a href="<%= prevPage.path %>"><%= prevPage.title %></a></div>
 <%
 });
 %>
 
 <% (page.next||[]).forEach(function(p) {
 var nextPage = pages[p];
-  %>
-    <div class="btn trackNav nextStep"><a href="<%= nextPage.path %>"><%= nextPage.title %></a> <a href="<%= nextPage.path %>"><i class="icon icon-circle-arrow-right"></i></a></div>
+%>
+<div class="btn trackNav nextStep"><a href="<%= nextPage.path %>"><%= nextPage.title %></a> <a href="<%= nextPage.path %>"><i class="icon icon-circle-arrow-right"></i></a></div>
 <%
 });
 %>
-
 <div class="clear"></div>
 
     <% if (page.introText) { %>
 <p class="introText"><%- page.introText %></p>
     <% } %>
-    <% if (page.content) { %>
+    <% if (page.content && ["asciidoc", "graphgist"].indexOf(page.type) == -1) { %>
 <p class="content"><%- typeof page.content == "function" ? page.content(locals) : page.content %></p>
     <% } %>
 
+    <% include ../item/_full %>
 
 <a name="featured"></a>
-<% 
+<%
     var items = [].concat(page.featured);
     var config = page.config || {};
     var showSlides = false || config['no_slides']===false; // items.length > 1 && !config['no_slides'];
     if (page.featured && items.length) {
 
     %><% if (showSlides) { %><ul class="bxslider"><% } %><%
-            items.forEach(function(key) { 
+            items.forEach(function(key) {
             var item = findItem(key);
             if (!item) {
                 //console.log("No featured item for key",key);
@@ -59,12 +55,12 @@ var nextPage = pages[p];
             }
             if (typeof(key)!="string") key="";
     %>
-        <% if (showSlides) { %> 
+        <% if (showSlides) { %>
             <li title="<%= item.title||'' %>">
-            <% include ../partials/item/_full %>
+            <% include ../item/_full %>
             </li>
         <% } else { %>
-            <% include ../partials/item/_full %>
+            <% include ../item/_full %>
         <% } }); %>
         <% if (showSlides) { %>
             </ul>
@@ -76,7 +72,7 @@ var nextPage = pages[p];
 %>
     <div class="related" id="related" class="mainElement">
 
-            <% chunk(page.related,4).forEach(function(row) { %>
+         <% chunk(page.related,4).forEach(function(row) { %>
                 <div class="row">
                 <%
                 row.forEach(function(key) {
@@ -87,14 +83,14 @@ var nextPage = pages[p];
                     }
                     if (typeof(key)!="string") key="";
                       %>
-                    <% include ../partials/item/_tile %>
+                    <% include ../item/_tile %>
                 <% }); %>
 
                 </div><!-- row -->
                 <div class="clear"></div>
 
          <% }); %>
-                    
+
     </div><!-- related -->
 
 <% } %>
@@ -111,7 +107,7 @@ var nextPage = pages[p];
             }
             var ref = $('#featured_slider');
             var offset = 224;
-    
+
             if (!ref.length) {
                 ref = $('div.featured');
                 offset = 240;
@@ -121,14 +117,14 @@ var nextPage = pages[p];
                 }
             }
             var featuredTop = ref && ref.first() && ref.first().offset() && ref.first().offset().top;
-            
+
         }
 
         var region="<%= region %>";
-        
+
         function filterByRegion(region) {
             var elements=$("div[area]");
-            if (elements.length==0) return; 
+            if (elements.length==0) return;
             elements.each(function () {
                 var area = $(this).attr("area");
                 if (!area || area == 'WORLD' || region == 'WORLD' || area == region) $(this).show();
@@ -140,15 +136,15 @@ var nextPage = pages[p];
             filterByRegion($(this).val());
         });
 //      filterByRegion(region);
-        
+
         nav.activateMain('<%= mainCategory%>');
         nav.initThumbnails();
-        
+
         init();
     });
 
 
 </script>
-<% } %>        
+<% } %>
 
-<% include ../foot %>
+<% include ../../foot %>
