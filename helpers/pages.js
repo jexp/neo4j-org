@@ -28,6 +28,14 @@ exports.pages = {
        related: [
            content.action.signup ,
            content.books.neo4j20_de,
+           {
+               title:"The Neo4j Blog",
+               author:"Neo4j",
+               type:"link",
+               thumbnail: asset("img/"),
+               introText: "The Neo4j Blog informs about all things Neo4j: News, Releases, HowTos. It also features developer centric articles by Neo4j engineers and active community contributors",
+               path: "http://neo4j.com/blog/"
+           },
            "graphgist",
 //           "events",
            "trainings",
@@ -2121,32 +2129,7 @@ exports.pages = {
         introText: "The Neo4j Driver offers quick integration into existing Java applications and a variety of tools. It supports the Neo4j Server, embedded and in-memory databases.",
         // content: "",
         featured: [content.projects.jdbc],
-        related: [
-            {
-                type: "article",
-                thumbnail: "",
-                title: "Neo4j-JDBC Driver Blog Posts",
-                author: ["rickardoberg", "mesirii", "tiqview"],
-                introText: "<ul><li><a href='http://rickardoberg.wordpress.com/2011/12/19/creating-a-jdbc-driver-for-neo4j/'>Introduction by Rickard Öberg</a></li>\
-                <li><a href='http://blog.neo4j.org/2012/07/cypher-jdbc-tools-testing-results.html'>Using the JDBC Driver with SQL-Tools</a></li>\
-                <li><a href='http://tiqview.tumblr.com/post/25503986247/using-sqlexplorer-with-neo4j-graph-database'>SQL Explorer</a></li>\
-                <li><a href='http://tiqview.tumblr.com/post/25427068878/querying-neo4j-graph-data-with-cypher-in-squirrel-via'>SQuirrel SQL</a></li>\
-                </ul>"
-            },
-            {
-                type: "article",
-                thumbnail: "https://si0.twimg.com/profile_images/130504078/TIQView_bigger.jpg",
-                tags: ["cypher", "jdbc", "BI"],
-                title: "Neo4j-JDBC and Business Integration (BI)",
-                author: {name: "Ralf Becher", twitter: "tiqview"},
-                introText: "<ul><li><a href='http://community.jaspersoft.com/questions/803043/anything-neo4j'>JasperSoft</a></li>\
-                <li><a href='http://tiqview.tumblr.com/post/24953750981/working-with-graph-data-from-neo4j-in-qlikview'>QlikView</a></li>\
-                <li><a href='http://community.qlikview.com/docs/DOC-3115'>QlikView Neo4j Application</a></li>\
-                <li><a href='http://tiqview.tumblr.com/post/25430299054/neo4j-data-integration-with-pentaho-kettle'>Pentaho Kettle</a></li>\
-                <li><a href='http://tiqview.tumblr.com/post/25448716755/neo4j-data-profiling-with-ataccama-dq-analyzer'>Ataccama DQ Analyzer</a></li>\
-                </ul>"
-            } , "jee"
-        ]
+        related: [content.articles.jdbc_blog, content.articles.jdbc_bi , "jee" ]
     },
     getting_started: {
         path: "/develop/getting_started",

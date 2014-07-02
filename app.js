@@ -144,20 +144,20 @@ app.locals.chunk = function (arr, size) {
 };
 
 function findItem(key,type) {
-    // console.log("findItem", key, type)
+    console.log("findItem", key, type)
     if (typeof key == 'undefined') return null;
     if (typeof key == 'function') key = key();
     if (typeof key == 'object') return key;
     var parts = key.match(/^\/c\/(.+?)\/+(.+?)$/);
     if (parts) {
         //TODO: this is not working
-        // console.log('findItem path', key, 'type: ',typeof key, parts);
+        console.log('findItem path', key, 'type: ',typeof key, parts);
         key = parts[2];
         type = parts[1];
     }
     if (type) {
-        // console.log("key",key,"type",type, item);
         var item=addType(app.locals[type]?app.locals[type][key]:content.content[type][key],type.replace(/s$/,""));
+        console.log("by type","key",key,"type",type, item);
         if (!item) return key;
     }
     function addType(item, type) {
