@@ -1608,7 +1608,6 @@ exports.content = {
             language: "java",
             framework: "jdbc",
             authors: ["mesirii","rickardoberg","jakewins"],
-            source: "https://github.com/neo4j-contrib/neo4j-jdbc",
             url: "https://github.com/neo4j-contrib/neo4j-jdbc",
             logo: "http://rickardoberg.files.wordpress.com/2011/12/screen-shot-2011-12-19-at-5-31-52-pm.png",
             text: "The Neo4j JDBC driver allows to access Neo4j server, embedded and in-memory databases via the JDBC API using Cypher. It also supports the <a href='http://docs.neo4j.org/chunked/milestone/rest-api-transactional.html'>transactional HTTP endpoint of Neo4j 2.0</a>. ",

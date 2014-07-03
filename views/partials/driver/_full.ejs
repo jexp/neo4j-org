@@ -5,9 +5,9 @@
 
     <a target="_blank" href="<%= info['url'] %>">
         <img src="<%= info['logo'] %>" title="<%= info['name'] %>" alt="image"/>
-        <h5><%= info['name'] %></h5>
+        <h2><%= info['name'] %></h2>
     </a>
-        <% resolve_authors(info['author']).map(function(author) { %>
+        <% resolve_authors(info['authors']||info['author']).map(function(author) { %>
             <h4><em><a target="_blank" href="http://twitter.com/<%= author.twitter %>"><%= author.name %></a></em></h4>
         <% }).join(", "); %>
 
@@ -16,7 +16,11 @@
 
     <p><%- info['text'] %></p>
 
-    <div style="text-align: center; "><% if (info['site']) { %>
+    <div style="text-align: center; ">
+        <% if (info['url']) { %>
+        <a target="_blank" href="<%= info['url'] %>">Read More</a>
+        <% } %>
+        <% if (info['site']) { %>
         <a target="_blank" href="<%= info['site'] %>">Site</a>
         <% }
         if (info['docs']) {
