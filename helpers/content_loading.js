@@ -22,58 +22,38 @@ var github_client_secret=process.env.GITHUB_CLIENT_SECRET
  */
 
 function load_github_content(locals, name, path, host) {
-    locals.content[name]="Content not found";
-    if (!host) host="raw.githubusercontent.com";
-	try {
-        var url = "https://" +host + "/" + path;
-        request(url,{
-            headers: {'User-Agent': 'neo4j.org',accept:'application/vnd.github.VERSION.raw'},
-            auth : {user:github_personal_token,pass:'x-oauth-basic'}, encoding:"UTF-8"
-        },function(err,res,data) {
-            if (err) {
-                console.log("Error loading content for",name,host,path,e);
-                locals.content[name]="Content from http://"+host+"/"+path+" not loaded!";
-                return;
-            }
-//            console.log("response for",url,res.headers);
-            // todo store res.headers.etag for conditional requests to save rates
-            //
-            locals.content[name] = data;
-        });
-	} catch(e) {
-		console.log("Error loading content for",name,host,path,e)
-		locals.content[name]="Content from http://"+host+"/"+path+" not loaded!";
-	}
+    locals.content[name] = "Content for " + name + " not found";
+    if (!host) host = "raw.githubusercontent.com";
+    var url = "https://" + host + "/" + path;
+    return load_content(locals, name, url);
 }
 
-function load_content(locals, name, url,cb) {
-    locals.content[name]="Content not found";
-    //console.log("load_content", name);
-	try {
-        // todo other
-        var auth = url.match("/github.com/") ?  {user:github_personal_token,pass:'x-oauth-basic'} : null;
-        request(url,
-            { headers: {'User-Agent': 'neo4j.org',accept:'application/vnd.github.VERSION.raw'},
-              auth: auth, encoding:"UTF-8" },
-            function(err,res,data) {
-            if (err && !cb) {
-                console.log("Error loading content for",name,url,e);
-                locals.content[name]="Content "+name+" from "+url+" not loaded!";
-                return;
-            }
-//            console.log("response for",name,url,res.headers, data);
-            // todo store res.headers.etag for conditional requests to save rates
-            locals.content[name] = data;
-            if (cb) {
-                cb(err,data,name,url);
-            }
-
-                //console.log("locals.content:", locals.content[name]);
-        });
-	} catch(e) {
-		console.log("Error loading content for",name,url,e);
-        locals.content[name]="Content "+name+" from "+url+" not loaded!";
-	}
+function load_content(locals, name, url, cb) {
+    locals.content[name] = "Content not found";
+    try {
+        var options = { headers: { 'User-Agent': 'neo4j.org'}, encoding: "UTF-8"};
+        if (url.match("/github/")) {
+            options.auth = {user: github_personal_token, pass: 'x-oauth-basic'};
+            options.headers.accept = 'application/vnd.github.VERSION.raw';
+        }
+        request(url, options,
+            function (err, res, data) {
+                console.log("loading", url, "response.headers", res.headers);
+                if (err && !cb) {
+                    console.log("Error loading content for", name, url, e);
+                    locals.content[name] = "Content " + name + " from " + url + " not loaded!";
+                    return;
+                }
+                // todo store res.headers.etag for conditional requests to save rates
+                locals.content[name] = data;
+                if (cb) {
+                    cb(err, data, name, url);
+                }
+            });
+    } catch (e) {
+        console.log("Error loading content for", name, url, e);
+        locals.content[name] = "Content " + name + " from " + url + " not loaded!";
+    }
 }
 
 exports.load_content = load_content;

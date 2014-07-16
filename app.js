@@ -39,7 +39,7 @@ var express = require('express')
     , merge = require("./helpers/utils.js").merge
     , twitter = require("./helpers/twitter.js")
     , mylog = require("./helpers/log.js")
-    , load_gist = require("./helpers/load_gist.js").load_gist
+    , load_gist = require("./helpers/load_gist.js")
     , kissmetrics = require('kissmymetrics')
     ;
 
@@ -62,6 +62,7 @@ app.locals.contributors = {};
 app.locals.graphgists = {};
 app.locals.articles = content.content.articles;
 app.locals.graphgist_files = { content : {}};
+app.locals.load_cache = { };
 app.locals.drivers = data.drivers;
 app.locals.ext_content = data.ext_content;
 app.locals.trainings = data.trainings;
@@ -79,42 +80,7 @@ app.locals._include = render.include;
 app.locals.render = ejs.render;
 app.locals.merge = merge;
 
-function get_graphgist(item,cb) {
-    function resolveGraphGistUrl(url) {
-        // http://gist.neo4j.org/?8173017
-        // http://gist.neo4j.org/?github-HazardJ%2Fgists%2F%2FDoc_Source_Graph.adoc
-        // http://gist.neo4j.org/?dropbox-14493611%2Fmovie_recommendation.adoc
-        var decoded = decodeURIComponent(url);
-        var match = decoded.match(/^http:\/\/gist.neo4j.org\/\?(.+)/);
-        if (match) {
-            var original = match[1];
-            if (original.match(/^[0-9a-f]{5,}/i)) {
-                return "https://gist.github.com/" + original;
-            }
-            if (original.match(/github-/i)) {
-                return "https://github.com/" + original.substring("github-".length);
-            }
-            if (original.match(/dropbox-/i)) {
-                return "https://dl.dropboxusercontent.com/u/" + original.substring("dropbox-".length);
-            }
-        }
-        return decoded;
-    }
-    var original = resolveGraphGistUrl(item.url);
-    var content = app.locals.graphgist_files.content[item.url];
-
-    if (!content || content == "Content not found") {
-        // todo dropbox
-        content_loading.load_content(app.locals.graphgist_files, item.url, original,cb);
-    } else {
-        if(cb) {
-            cb(null, content, item.url, original);
-        }
-        return content;
-    }
-}
-
-app.locals.get_graphgist = get_graphgist;
+app.locals.get_graphgist = function(item,cb) { return load_gist.get_graphgist(app.locals.graphgist_files,item,cb) };
 
 app.locals.theme = function () {
     return "aqua";
@@ -515,25 +481,18 @@ route_get('/highlighter/*', routes.resource);
 route_get('/asciidoc', routes.asciidoc);
 route_get('/js', routes.javascript);
 
-function findGist(locals, url) {
-    var item;
-    for (var k in locals.graphgists) {
-        var gist = locals.graphgists[k];
-        if (gist.url.indexOf(url) != -1) {
-            item = gist;
-        }
-    }
-    return item;
-}
-
+route_get('/doc/:version/*',function(req,res) {
+   var version = req.param["version"];
+    
+});
 route_get('/api/graphgist',function (req, res) {
     var path =  req.originalUrl.substring("/api/graphgist".length);
-    load_gist(path, function(err, data) {
+    load_gist.load_gist(path, app.locals.load_cache,function(err, data) {
         if (err) {
             console.log("Error loading graphgist",path,err);
             res.send(404,"Error loading graphgist from: " + path+" "+err)
         } else {
-            var item = findGist(app.locals,path);
+            var item = load_gist.findGist(app.locals,path);
             res.set('Content-Type', 'text/plain');
             if (item) {
                 function setHeader(key,prop) {
@@ -554,12 +513,12 @@ route_get('/api/graphgist',function (req, res) {
 
 route_get('/graphgist', function (req, res) {
     var path =  req.originalUrl.substring("/graphgist".length);
-    load_gist(path, function(err, data) {
+    load_gist.load_gist(path, app.locals.load_cache,function(err, data) {
         var item = {};
         if (err) {
             console.log("Error loading graphgist",path,err);
         } else {
-            item = findGist(app.locals,path) | {};
+            item = load_gist.findGist(app.locals,path) | {};
         }
         res.render("participate/graphgist",{ path: path, title:"Neo4j GraphGist "+(item['title']?item.title:""), category:"Participate", data:data, req:req, item:item});
     });
@@ -597,30 +556,10 @@ route_get('/video/*', function (req, res) {
     res.redirect('http://watch.neo4j.org/video/' + file);
 });
 
+var sitemap = require('./helpers/sitemap');
 
-route_get('/api/sitemap.csv', function (req, res) {
-    function quote(value) {
-        if (value == null || value == "") return "";
-        return '"'+value.toString().replace(/"/g,'""')+'"';
-    }
-    function values(item) {
-        if (!item) return [];
-        return [item["id"]||item["key"],item["type"],item["path"]||item["url"]||item["src"],item["title"]||item["name"],item["author"]||item["authors"],quote(item["introText"]),quote(item["content"]||item["description"]),item["tags"]];
-    }
-
-    var delim = "§";
-    var header = ["id", "type", "url", "title", "authors", "intro", "content","tags","child","c_id", "c_type", "c_url", "c_title", "c_authors", "c_intro", "c_content","c_tags"].join(delim);
-    var result=[header];
-    for (var id in app.locals.pages) {
-        var page = app.locals.pages[id];
-        var pageStr = values(page).join(delim)+delim;
-        //console.log(id,"related",typeof(page.related),"featured",typeof(page.featured));
-        if (page.featured) page.featured.forEach(function (f) { var item = findItem(f); result.push(pageStr + "FEATURED§" + values(item).join("§"))});
-        if (page.related) page.related.forEach(function (f) { var item = findItem(f); result.push(pageStr + "RELATED§" + values(item).join("§"))});
-        if (!(page.related || page.featured)) result.push(pageStr);
-    }
-    res.send(result.join("\n"));
-});
+route_get('/api/sitemap.csv', function (req, res) { res.send(sitemap.asCsv(pages,content)); });
+route_get('/api/sitemap.json', function (req, res) { res.send(sitemap.asJson(pages,content)); });
 
 
 http.createServer(app).listen(app.get('port'), function () {
