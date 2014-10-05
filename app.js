@@ -326,7 +326,7 @@ function forward(url, stat) {
       stat = 302;
     }
     return function (req, res) {
-        res.redirect(stat, url);
+        res.redirect(stat,url);
     }
 }
 
@@ -359,16 +359,11 @@ route_get('/index_graph', routes.index_graph);
 route_get('/search', routes.search);
 
 route_get('/drivers', forward("/develop/drivers"));
-route_get('/develop/drivers', forward("http://neo4j.com/contrib/",301));
-route_get('/release-notes', forward("http://neo4j.com/release-notes/",301));
 route_get('/participate/events/tutorials_EU', forward("/participate/events/trainings_EU"));
 route_get('/participate/events/tutorials_US', forward("/participate/events/trainings_US"));
 route_get('/participate/events/tutorials_DE', forward("/participate/events/trainings_DE"));
-route_get('/participate/q_and_a', forward("http://neo4j.com/contact-us/",301));
-
 
 route_get('/participate/events/tutorials', forward("/participate/events/trainings"));
-route_get('/participate/events/trainings', forward("http://neo4j.com/graphacademy/",301));
 route_get('/participate/events_test',    function(req, res){
     res.render('participate/events', { title: "Neo4j Events", requestedType:req.query["type"],requestedSource:req.query["source"]||"spreadsheet" });
 });
@@ -378,27 +373,9 @@ route_get('/participate/events_plain', function(req, res){
 route_get('/participate/events_map', function(req, res){
     res.render('participate/events_map', { title: "Neo4j Events Map", requestedType:req.query["type"],requestedSource:req.query["source"]||"spreadsheet"});
 });
-
-route_get('/participate/contributors', forward('http://neo4j.com/contrib/',301));
-route_get('/participate/conferences', forward('/participate/events/conferences/'));
-route_get('/participate/events/conferences', forward('http://neo4j.com/events/#/events?area=World&type=Conference',301));
-route_get('/participate/events/conferences_DE', forward('http://neo4j.com/events/#/events?area=EU / DE&type=Conference',301));
-route_get('/participate/events/conferences_EU', forward('http://neo4j.com/events/#/events?area=EU / DE&type=Conference',301));
-route_get('/participate/events/conferences_US', forward('http://neo4j.com/events/#/events?area=US / CA / MX&type=Conference',301));
-route_get('/participate/events/meetups', forward('http://neo4j.com/events/#/events?area=World&type=Meetup',301));
-route_get('/participate/events/meetups_DE', forward('http://neo4j.com/events/#/events?area=EU / DE&type=Meetup',301));
-route_get('/participate/events/meetups_EU', forward('http://neo4j.com/events/#/events?area=EU / DE&type=Meetup',301));
-route_get('/participate/events/meetups_US', forward('http://neo4j.com/events/#/events?area=US / CA / MX&type=Meetup',301));
-route_get('/participate/events/webinars', forward('http://neo4j.com/events/#/events?area=World&type=Webinar',301));
-
-route_get('/learn/licensing', forward('http://neo4j.com/subscriptions/',301));
-route_get('/learn/use_cases', forward('http://neo4j.com/use-cases/',301));
-
-
 route_get('/trainings', forward("/participate/events/trainings"));
 route_get('/tutorials', forward("/participate/events/trainings"));
 route_get('/learn/events', forward("/events"));
-route_get('/events', forward("http://neo4j.com/events/",301));
 
 route_get('/download_thanks', routes.pages);
 route_get('/subscribe_thanks', function(req, res){
@@ -407,11 +384,12 @@ route_get('/subscribe_thanks', function(req, res){
 route_get('/participate/meetup_signup', routes.meetup_signup);
 route_get('/participate/meetups', forward("/participate/events/meetups"));
 
-route_get('/terms', forward("http://neo4j.com/terms/",301));
-route_get('/privacy', forward("http://neo4j.com/privacy-policy/",301));
+route_get('/terms', routes.terms); // terms and conditions
+route_get('/privacy', routes.privacy); // privacy policy
 route_get('/release-notes', routes.release_notes);
 route_get('/release-notes/faq', forward("/download/upgrade-faq"));
 route_get('/download/upgrade-faq', routes.upgrade_faq);
+route_get('/learn/education', routes.online_course);
 route_get('/learn/online_course', routes.online_course);
 
 // route_get('/misc/beer', routes.beer);
@@ -430,8 +408,6 @@ route_get('/ruby', forward("/develop/ruby"));
 
 route_get('/community', forward("/participate"));
 route_get('/learn/intro', forward("/learn"));
-//route_get('/learn', forward("http://neo4j.com/graphacademy/",301));
-route_get('/learn/education', forward("http://neo4j.com/graphacademy/",301));
 route_get('/learn/concepts', forward("/learn"));
 route_get('/community/feeds', forward("/participate"));
 route_get('/resources', forward("/learn"));
@@ -440,15 +416,11 @@ route_get('/nabble', forward("http://groups.google.com/group/neo4j"));
 route_get('/spring', forward("/develop/spring"));
 route_get('/heroku', forward("/develop/heroku"));
 route_get('/azure', forward("/develop/cloud/azure"));
-
 route_get('/licensing-guide', forward("/learn/licensing"));
-route_get('/learn/licensing', forward("http://neo4j.com/subscriptions/",301));
-
 route_get('/bookstore', forward("/learn/books"));
-route_get('/learn/books', forward("http://neo4j.com/books/",301));
 
-route_get('/price-list', forward("http://www.neotechnology.com/price-list/",301));
-route_get('/customers', forward("http://www.neotechnology.com/customers/",301));
+route_get('/price-list', forward("http://www.neotechnology.com/price-list/"));
+route_get('/customers', forward("http://www.neotechnology.com/customers/"));
 
 page_handling.init(app,app.locals.pages);
 

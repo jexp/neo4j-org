@@ -86,6 +86,7 @@ exports.pages = {
         featured: null,
         related: [
             content.links.online_intro_training,
+            "q_and_a",
             "events",
             {
                 type: "include",
@@ -694,6 +695,14 @@ exports.pages = {
         featured: [content.videos.cypher],
         related: ["drivers", "try", "neoclipse", "visualize", "jee"]
     },
+    books: {
+        path: "/learn/books",
+        thumbnail: asset("img/books/nosql_distilled.png"),
+        title: "Graph Database related Books",
+        introText: "Learn more about Neo4j, Graph Theory and Graph Databases by reading these amazing books!",
+        featured: [content.books.graphdatabases,content.books.neo4j20_de],
+        related: [content.books.springdata, content.books.goodrelationships, content.books.nosqldistilled, content.books.sevendatabases, content.books.neo4jinaction, content.books.visualcomplexity, content.books.connected]
+    },
     neo4j20_de: {
         path: "/learn/books/neo4j20_de",
         thumbnail: asset("img/books/neo4j20_de_small.jpg"),
@@ -1261,6 +1270,36 @@ exports.pages = {
     meetups_US: { path: "/participate/events/meetups_US" },
     meetups_EU: { path: "/participate/events/meetups_EU" },
     meetups_DE: { path: "/participate/events/meetups_DE" },
+    conferences: {
+        path: "/participate/events/conferences",
+        title: "Neo4j at Conferences",
+        prev: ["trainings"],
+        next: ["events"],
+        introText: "There is a lot of interest in graph databases and Neo4j. here are some of the conferences where you can learn and " +
+            "talk more about Neo4j. <br/>Find the next conference talks in <a href='/participate/events/conferences_US'>the US</a>, or in Europe in <a href='/participate/events/conferences_EU'>English</a> or <a href='/participate/events/conferences_DE'>German</a>.",
+        thumbnail: asset("img/logo/graphconnect.png"),
+        actionText: "Neo4j at conferences",
+        featured: [content.links.graphconnect],
+        related: []
+
+    },
+    q_and_a: {
+        path: "/participate/q_and_a",
+        title: "Ask Questions and Share Answers",
+        introText: "Here you can find some of the resources that give you access to questions, answers and support around Neo4j related questions.",
+        thumbnail: asset("img/logo/googlegroups.png"),
+        featured: [content.links.stack_overflow],
+        related: [
+            content.links.mailing_list, content.links.github_neo4j,
+            {
+                title: "FAQ",
+                introText: "There are FAQ's in several places:<ul>\
+                    <li><a href='http://github.com/simpsonjulian/neo4j-faq/blob/master/README.md#neo4j-faq' target='_blank'>Julian Simpson</a></li>\
+                    <li><a href='http://stackoverflow.com/questions/tagged/neo4j?sort=faq&pagesize=50' target='_blank'>frequent questions on StackOverflow</a></li>\
+                    </ul>"
+            }
+        ]
+    },
     neo4j: {
         path: "/learn/neo4j",
         title: "What is Neo4j?",
