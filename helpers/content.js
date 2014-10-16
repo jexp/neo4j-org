@@ -18,15 +18,15 @@ exports.content = {
             title: "Neo4j Releases",
             path: "/partials/version/_main"
         },
-        "2_1_2": {
+        "2_1_5": {
             type: "version",
-            title: "Neo4j Stable Release 2.1.2",
-            version: "2.1.2",
+            title: "Neo4j Stable Release 2.1.5",
+            version: "2.1.5",
             stability: "stable",
             key: "stable",
             date: "June 12, 2014",
             introText: "ETL CSV Import, Dense Nodes",
-            path: "http://neo4j.com/blog/neo4j-2-1-2/",
+            path: "http://neo4j.com/release-notes#2.1.5",
             thumbnail: asset("img/still/install.gif"),
             src: "http://player.vimeo.com/video/53838744"
         },
@@ -34,11 +34,11 @@ exports.content = {
             type: "version",
             stability: "stable",
             key: "stable",
-            title: "Neo4j Stable Release 2.1.2",
-            version: "2.1.2",
+            title: "Neo4j Stable Release 2.1.5",
+            version: "2.1.5",
             date: "June 12, 2014",
             introText: "ETL CSV Import, Dense Nodes",
-            path: "http://neo4j.com/blog/neo4j-2-1-2/",
+            path: "http://neo4j.com/release-notes#2.1.5",
             thumbnail: asset("img/still/install.gif"),
             src: "http://player.vimeo.com/video/53838744"
         },
@@ -59,29 +59,29 @@ exports.content = {
             key: "milestone",
             stability: "milestone",
             type: "version",
-            title: "Neo4j Stable Release 2.1.2",
-            version: "2.1.2",
+            title: "Neo4j Stable Release 2.1.5",
+            version: "2.1.5",
             date: "June 12, 2014",
             introText: "ETL CSV Import, Dense Nodes",
-            path: "http://neo4j.com/blog/neo4j-2-1-2/",
+            path: "http://neo4j.com/release-notes#2.1.5",
             thumbnail: asset("img/still/install.gif"),
             src: "http://player.vimeo.com/video/53838744"
         },
-        "2_0_4": {
+        "2_0_5": {
             stability: "stable",
             type: "version",
-            title: "Neo4j Stable Release 2.0.4",
-            version: "2.0.4",
+            title: "Neo4j Stable Release 2.0.5",
+            version: "2.0.5",
             date: "July 8, 2014",
             introText: "General Availability",
             path: "http://neo4j.com/blog/neo4j-2-0-ga-graphs-for-everyone/",
             thumbnail: asset("img/still/install.gif"),
             src: "http://player.vimeo.com/video/53838744"
         },
-        "1_9_8": {
+        "1_9_9": {
             type: "version",
-            title: "Neo4j Stable Release 1.9.8",
-            version: "1.9.8",
+            title: "Neo4j Stable Release 1.9.9",
+            version: "1.9.9",
             stability: "stable",
             date: "June 19, 2014",
             introText: "General Availability",

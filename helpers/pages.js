@@ -210,8 +210,8 @@ exports.pages = {
         related: [
             content.install.stable,
 //            content.install.milestone,
-            content.install["2_0_4"],
-            content.install["1_9_8"],
+            content.install["2_0_5"],
+            content.install["1_9_9"],
             content.install["1_8_3"],
             content.install["1_7_2"],
             content.install["1_6_3"],
